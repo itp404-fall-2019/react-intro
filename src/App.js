@@ -10,16 +10,30 @@ class App extends React.Component {
     this.state = {
       members: [],
       repos: [],
-      loading: true
+      total: 0
     };
-  }
-  async componentDidMount() {
-    let [members, repos] = await Promise.all([
-      getMembers('emberjs'),
-      getRepos('emberjs')
-    ]);
 
-    this.setState({ members, repos, loading: false });
+    this.handleClickMembers = this.fetchMembers.bind(this);
+  }
+  async fetchMembers() {
+    this.setState({ loading: true });
+    let members = await getMembers('emberjs');
+    this.setState({
+      members,
+      repos: [],
+      total: members.length,
+      loading: false
+    });
+  }
+  fetchRepos = async () => {
+    this.setState({ loading: true });
+    let repos = await getRepos('emberjs');
+    this.setState({
+      repos,
+      members: [],
+      total: repos.length,
+      loading: false
+    });
   }
   render() {
     if (this.state.loading) {
@@ -28,7 +42,10 @@ class App extends React.Component {
 
     return (
       <div>
-        <p>{this.state.members.length} Members of Ember.js</p>
+        {/* <button onClick={this.fetchMembers.bind(this)}>Members</button> */}
+        <button onClick={this.handleClickMembers}>Members</button>
+        <button onClick={this.fetchRepos}>Repos</button>
+        <p>Total Results: {this.state.total}</p>
         <GitHubMembersList members={this.state.members} />
         <GitHubReposList repos={this.state.repos} />
       </div>
