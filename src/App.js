@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import MemberImage from './MemberImage';
-import GitHubRepoCard from './GitHubRepoCard';
+import GitHubMembersList from './GitHubMembersList';
+import GitHubReposList from './GitHubReposList';
 import Loading from './Loading';
 import { getMembers, getRepos } from './GitHubApi';
 class App extends React.Component {
@@ -22,19 +22,15 @@ class App extends React.Component {
     this.setState({ members, repos, loading: false });
   }
   render() {
+    if (this.state.loading) {
+      return <Loading />;
+    }
+
     return (
       <div>
         <p>{this.state.members.length} Members of Ember.js</p>
-        <div>
-          {this.state.loading ? <Loading /> : this.state.members.map((member) => {
-            return <MemberImage member={member} key={member.id} />
-          })}
-        </div>
-        <div>
-        {this.state.loading ? <Loading /> : this.state.repos.map((repo) => {
-          return <GitHubRepoCard repo={repo} key={repo.id} />
-        })}
-        </div>
+        <GitHubMembersList members={this.state.members} />
+        <GitHubReposList repos={this.state.repos} />
       </div>
     );
   }
