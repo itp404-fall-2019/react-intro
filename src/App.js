@@ -12,6 +12,8 @@ class App extends React.Component {
       repos: [],
       total: 0
     };
+
+    this.handleClickMembers = this.fetchMembers.bind(this);
   }
   async fetchMembers() {
     this.setState({ loading: true });
@@ -40,7 +42,8 @@ class App extends React.Component {
 
     return (
       <div>
-        <button onClick={this.fetchMembers.bind(this)}>Members</button>
+        {/* <button onClick={this.fetchMembers.bind(this)}>Members</button> */}
+        <button onClick={this.handleClickMembers}>Members</button>
         <button onClick={this.fetchRepos}>Repos</button>
         <p>Total Results: {this.state.total}</p>
         <GitHubMembersList members={this.state.members} />
