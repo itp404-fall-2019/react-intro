@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import GitHubMembersList from './GitHubMembersList';
 import GitHubReposList from './GitHubReposList';
+import SearchForm from './SearchForm';
 import Loading from './Loading';
 import { getMembers, getRepos } from './GitHubApi';
 class App extends React.Component {
@@ -10,8 +11,7 @@ class App extends React.Component {
     this.state = {
       members: [],
       repos: [],
-      total: 0,
-      searchValue: ''
+      total: 0
     };
 
     this.handleClickMembers = this.fetchMembers.bind(this);
@@ -27,15 +27,12 @@ class App extends React.Component {
       loading: false
     });
   }
-  async fetchResults(event) {
-    event.preventDefault();
+  async fetchResults(organization) {
     this.setState({ loading: true });
 
-    let org = this.state.searchValue;
-
     let [members, repos] = await Promise.all([
-      getMembers(org),
-      getRepos(org)
+      getMembers(organization),
+      getRepos(organization)
     ]);
 
     this.setState({ members, repos, loading: false });
@@ -50,9 +47,6 @@ class App extends React.Component {
       loading: false
     });
   }
-  handleSearchInputChange = (event) => {
-    this.setState({ searchValue: event.target.value });
-  }
   render() {
     if (this.state.loading) {
       return <Loading />;
@@ -60,10 +54,7 @@ class App extends React.Component {
 
     return (
       <div>
-        <form onSubmit={this.handleSearch}>
-          <input type="text" value={this.state.searchValue} onChange={this.handleSearchInputChange} />
-          <button type="submit">Search</button>
-        </form>
+        <SearchForm onSubmit={this.handleSearch} />
         <p>Total Results: {this.state.total}</p>
         <GitHubMembersList members={this.state.members} />
         <GitHubReposList repos={this.state.repos} />
