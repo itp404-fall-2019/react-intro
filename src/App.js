@@ -4,6 +4,7 @@ import Loading from './Loading';
 import GitHubReposList from './GitHubReposList';
 import GitHubMembersList from './GitHubMembersList';
 import { getMembers, getRepos } from './GitHubApi';
+
 class App extends React.Component {
   constructor() {
     super();
@@ -13,18 +14,6 @@ class App extends React.Component {
       loading: false,
       searchValue: ''
     };
-
-    this.handleClickReposButton = this.fetchRepos.bind(this);
-  }
-  async fetchRepos() {
-    this.setState({ loading: true });
-    let repos = await getRepos('emberjs');
-    this.setState({ repos, loading: false, members: [] });
-  }
-  fetchMembers = async () => {
-    this.setState({ loading: true });
-    let members = await getMembers('emberjs');
-    this.setState({ members, loading: false, repos: [] });
   }
   handleSearchInputChange = (event) => {
     this.setState({
@@ -33,7 +22,6 @@ class App extends React.Component {
   }
   handleSearch = async (event) => {
     event.preventDefault();
-    console.log(this.state.searchValue);
     this.setState({ loading: true });
 
     let [members, repos] = await Promise.all([
