@@ -3,6 +3,7 @@ import './App.css';
 import Loading from './Loading';
 import GitHubReposList from './GitHubReposList';
 import GitHubMembersList from './GitHubMembersList';
+import SearchForm from './SearchForm';
 import { getMembers, getRepos } from './GitHubApi';
 
 class App extends React.Component {
@@ -11,22 +12,15 @@ class App extends React.Component {
     this.state = {
       repos: [],
       members: [],
-      loading: false,
-      searchValue: ''
+      loading: false
     };
   }
-  handleSearchInputChange = (event) => {
-    this.setState({
-      searchValue: event.target.value
-    });
-  }
-  handleSearch = async (event) => {
-    event.preventDefault();
+  handleSearch = async (searchValue) => {
     this.setState({ loading: true });
 
     let [members, repos] = await Promise.all([
-      getMembers(this.state.searchValue),
-      getRepos(this.state.searchValue)
+      getMembers(searchValue),
+      getRepos(searchValue)
     ]);
 
     this.setState({ members, repos, loading: false });
@@ -34,13 +28,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <form onSubmit={this.handleSearch}>
-          <input
-            type="text"
-            value={this.state.searchValue}
-            onChange={this.handleSearchInputChange} />
-          <button type="submit">Search</button>
-        </form>
+        <SearchForm onSearch={this.handleSearch} />
         {this.state.loading && <Loading />}
         <div>
           <GitHubReposList repositories={this.state.repos} />
